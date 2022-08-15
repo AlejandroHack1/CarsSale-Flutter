@@ -33,7 +33,8 @@ class Cars {
         name: jsonData['nombre'],
         price: jsonData['precio'],
         description: jsonData['descripcion'],
-        image_url: "http://192.168.56.1/flutter/" + jsonData['imagen_url'],
+        //image_url: "http://192.168.56.1/flutter/" + jsonData['imagen_url'],
+        image_url: jsonData['imagen_url'],
         video_url: jsonData['video_url']);
   }
 }
@@ -117,7 +118,7 @@ class CustomListView extends StatelessWidget {
                             children: <Widget>[
                               Padding(
                                 child: Image.network(
-                                  image_url,
+                                  "http://192.168.56.1/flutter/" +image_url.split(',')[0],
                                   height: 200.0,
                                 ),
                                 padding: EdgeInsets.only(bottom: 5.0),
@@ -276,6 +277,8 @@ class _SecondScreenState extends State<SecondScreen> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> images = '${widget.value.image_url}'.split(',');
+
     return new Scaffold(
       appBar: new AppBar(title: new Text('Detalles')),
       body: new Container(
@@ -322,7 +325,7 @@ class _SecondScreenState extends State<SecondScreen> {
                                   margin: EdgeInsets.symmetric(horizontal: 2.0),
                                   child: '$i' == '${widget.value.image_url}'
                                       ? new Image.network(
-                                          '$i',
+                                          "http://192.168.56.1/flutter/" +'$i',
                                         )
                                       : YoutubePlayer(
                                           controller: _controller,
@@ -336,8 +339,31 @@ class _SecondScreenState extends State<SecondScreen> {
                             );
                           }).toList(),
                         )
-                      : Image.network('${widget.value.image_url}',
-                          height: 200.0),
+                      : images.length > 1
+                          ? CarouselSlider(
+                              options: CarouselOptions(height: 200.0),
+                              items: images.map((i) {
+                                return Builder(
+                                  builder: (BuildContext context) {
+                                    return Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 2.0),
+                                        child: new Image.network(
+                                          "http://192.168.56.1/flutter/" +'$i',
+                                        ));
+                                  },
+                                );
+                              }).toList(),
+                            )
+                          : Image.network("http://192.168.56.1/flutter/" +'${widget.value.image_url}',
+                              height: 200.0),
+
+                  /*ListView.builder(
+                          itemCount: images.length,
+                          itemBuilder: (context, index) =>
+                              Image.network('${images[index]}', height: 200.0)),*/
                   padding: EdgeInsets.all(1.0)),
               /* Padding(
                 //`widget` es la configuración actual. La configuración de un objeto State
